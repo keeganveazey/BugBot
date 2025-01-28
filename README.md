@@ -5,7 +5,15 @@ Image classification of common household pest images
 Household pest identification remains a significant challenge for New England residents, impacting individuals and communities such as property owners, renters, and residential building managers. Our proposed convolutional neural network (CNN) model for BugBot addresses this need through automated classification of common household pests. Unlike existing agricultural-focused solutions, our proposed model processes images captured under varied conditions, including diverse lighting and backgrounds. This diverse image approach offers a more robust classification than current models which heavily rely on controlled laboratory images and are irrelevant to everyday residents due to the agricultural focus of the research. 
 
 # BugBot Context
-Recent studies have demonstrated the effectiveness of CNNs in pest classification across various contexts and further reveals a consistent emphasis on data processing to improve model performance. Our project aims to bridge the gap between these agricultural-focused studies and household pest identification needs by incorporating the successful methodological elements identified in the literature including image rotation and mirroring. Our planned use of web-scraped images and potential ensemble method investigation represents a novel approach that addresses everyday people’s needs while building upon established technical foundations.
+Recent studies have demonstrated the effectiveness of CNNs in pest classification across various contexts and further reveal a consistent emphasis on data processing to improve model performance. Our project aims to bridge the gap between these agricultural-focused studies and household pest identification needs by incorporating the successful methodological elements identified in the literature including image rotation and mirroring. Our planned use of web-scraped images and potential ensemble method investigation represents a novel approach that addresses everyday people’s needs while building upon established technical foundations.
+
+# Purpose
+The purpose of BugBot is to assist New England residents in identifying common household pests using deep learning techniques. By utilizing a balanced and diverse dataset of insect images, BugBot provides a reliable, accurate, and user-friendly tool that helps users classify insects in their homes quickly and confidently. This eliminates the hassle of misclassifying insects or spending time searching for information on the internet, offering a streamlined and efficient solution to pest identification. 
+
+# Goals
+1. Diverse Data: Ensure a balanced and diverse dataset through rigorous data collection and preprocessing. 
+2. User-Friendly Deployment: Provide an intuitive interface through Streamlit for easy access and use.
+3. Accurate Classification: Classify 11 common household pests using a deep learning model and obtain high accuracy.
 
 # Our Dataset
 The data collection process is key to achieving our goal and provides a strong and consistent foundation for our project because of its diverse and evenly represented classes. 
@@ -39,5 +47,7 @@ It is important to acknowledge the limitations of this dataset which could inclu
 
 The final outcome of BugBot will provide interpretable insights to end users by providing accurate classifications of pests in their homes. We will utilize Streamlit to deliver a seamless user-friendly interface that takes in a user’s uploaded insect image and communicates the model output  – the predicted classification – through a text display on the screen. By using Streamlit as a platform for our model deployment, users will be able to receive their results in real time.
 
+# Setup Instructions
+TBA – will add when further information once in iteration 2.
 
 
