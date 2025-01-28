@@ -1,2 +1,55 @@
 # BugBot
-image classification of common household pest images
+Image classification of common household pest images
+
+# About BugBot:
+Household pest identification remains a significant challenge for New England residents, impacting individuals and communities such as property owners, renters, and residential building managers. Our proposed convolutional neural network (CNN) model for BugBot addresses this need through automated classification of common household pests. Unlike existing agricultural-focused solutions, our proposed model processes images captured under varied conditions, including diverse lighting and backgrounds. This diverse image approach offers a more robust classification than current models which heavily rely on controlled laboratory images and are irrelevant to everyday residents due to the agricultural focus of the research. 
+
+# BugBot Context and Literature Review
+This following review examines recently published papers in pest classification using machine learning and provides inspiration for the methodology that informs our model.
+
+Recent studies have demonstrated the effectiveness of CNNs in pest classification across various contexts. A relevant study is the research paper “An Efficient Deep Learning Approach for Jute Pest Classification Using Transfer Learning” by Muhammad Tanvirul Islam and Md. Sadekur Rahman. The primary similarity between their work and our proposed approach lies in the pest-classification specific image topic as well as the use of a CNN model use. However, their research specifically targets Jute pests, which pose significant challenges to Jute crop production in Bangladesh \autocite{islam_2024_an}. In contrast, our study will use a completely different dataset and will be used to classify common household pests found in New England. Another key difference between their work and ours is that Islam and Rahman investigate a variety of pre-trained models, while we plan to build the network from scratch while also exploring the potential of using ensemble methods. 
+
+In our review, we found the lack of diversity in training data to be notable factors across the literature. For example, Turkoglu et al.'s PlantDiseaseNet study in the paper “PlantDiseaseNet: Convolutional Neural Network Ensemble for Plant Disease and Pest Detection” utilized a highly controlled dataset, comprised of RGB images captured with standardized equipment and consistent resolution of 4000 x 6000 pixels. This contrasts significantly with our proposed methodology, which will incorporate web-scraped images with varying resolutions and background contexts. Furthermore, PlantDiseaseNet uses an ensemble of Support Vector Machines (SVMs) as the primary classifying component, only using a CNN as an averaging model for the final classification across multiple SVM outputs \autocite{turkoglu_2021_plantdiseasenet}. Meanwhile, our approach uses the CNN directly by feeding in the image data as the first layer.
+
+The literature also reveals a consistent emphasis on data processing to improve model performance. For instance, Rehman et al.'s work on brain tumor classification in the paper “A Deep Learning-Based Framework for Automatic Brain Tumors Classification Using Transfer Learning”, while in a different domain, provides valuable insight into image pre-processing. Their application of image flipping and rotation techniques \textcite{rehman_2019_a} aligns with our planned approach, though our implementation must account for the greater variability in pest imagery compared to standardized medical imaging.
+
+The research paper “Crop pest classification based on deep convolutional neural network and transfer learning” by the authors K. Thenmozhi and U. Srinivasulu Reddy also implements image processing for improved model performance, applying reflection, scaling, and rotation techniques. Thenmozhi and Reddy's research also represents one of the more comprehensive studies in the field, achieving over 95\% classification accuracy across three different datasets of crop pests \autocite{thenmozhi_2019_crop}. They further compare custom CNN models against pre-trained architectures including AlexNet and ResNet. We intend to adapt their comparison approach and to use similar augmentation techniques while acknowledging the different challenges presented by our more diverse dataset.
+
+For contrast, Rajan et al.'s work in the research paper “Detection And Classification Of Pests From Crop Images Using Support Vector Machine” demonstrates the limitations of simpler classification approaches. Their SVM-based system, while effective for their use case of binary classification between whiteflies and aphids, highlights the need for more complex learning approaches when handling multiple pest classes. Rajan et al.'s approach relies on manually designed feature extraction to detect and recognize pests. Manual feature extraction limits the accuracy and adaptability of pest detection by failing to capture varied image characteristics \autocite{guo_2024_overview}. Furthermore, their study's reliance on controlled greenhouse imagery further underscores the importance of our more comprehensive approach using diverse image sources. 
+
+Our research aims to bridge the gap between these agricultural-focused studies and household pest identification needs by incorporating the successful methodological elements identified in the literature such as image rotation and mirroring, and by comparing our CNN model to similar projects such as \textcite{islam_2024_an} jute pest study. Our planned use of web-scraped images and potential ensemble method investigation represents a novel approach that addresses everyday people’s needs while building upon established technical foundations.
+
+# Our Dataset
+The data collection process is key to achieving our goal and provides a strong and consistent foundation for our project because of its diverse and evenly represented classes. 
+
+The majority of the BugBot dataset was scraped using a publicly available API for scraping images from Bing search queries. A manual review and filtering process was then applied to the Bing-based dataset and was subject to the following standards:
+- The insect must be present in the image 
+- The image must show at least 75\% of the insect’s body 
+ The photo is not a drawing, cartoon, or an AI generated image
+- The image depicts the adult/matured insect
+
+For all collected images, it is also essential to eliminate duplicates or near-duplicates to prevent data leakage. Visual inspection techniques will be used to verify this in addition to image hashing as needed. Since no temporal or spatial dependencies exist in the dataset, random splitting for training, validation, and test subsets is appropriate. The validation set will guide hyper-parameter tuning, while the test set will provide an unbiased assessment of the model’s performance.
+
+Furthermore, it is important to note the unique nature of many pests that usually infest home environments in groups or colonies, including ants, termites, and bed bugs. Therefore, a direct effort was made to collect additional group images of insect infestations to be included in the dataset. After filtering, a range of approximately \textasciitilde\ 16\%-76\%, depending on the insect class, were kept from the original scraped data based on the above criteria. 
+
+After web scraping, additional data was collected by performing manual Google searches for image results using insect keywords, and by taking advantage of community postings on websites such as Reddit to collect home-environment-specific images. After combining the scraped images and manual supplement, the resulting dataset includes 160 raw images across each of the 11 insect classes.
+
+Since our dataset consists of RGB images with x and y coordinates, the only features are the image pixels themselves. However, additional hidden features will be extracted through preprocessing and modeling the data and includes visual characteristics, such as texture, RBG value, and pixel sequence. Furthermore, when the complete image matrix is flattened into a 1-dimensional feature vector, each pixel element becomes a feature of the overall image. 
+
+The target variable in this supervised learning project is the insect class, representing one of the 11 common household pests. It is a well-defined categorical variable with clear labels derived from the dataset. Since the dataset is designed with a balanced distribution of 160 images per class (100 for training, 40 for validation, and 20 for testing), there is no inherent class imbalance, and resampling techniques are not necessary. This ensures that the model will not favor any single class during training or evaluation.
+
+Due to the dataset design and manual filtering criteria, we have curated a dataset that adequately represents every insect class to ensure equal distribution of training, validation, and test data to reduce bias. We are also aware of potential bias in web scraping data due to the prevalence of scientific images which may not reflect the targeted end user – an everyday homeowner classifying an insect in their home. To mitigate this we have further supplemented the dataset with manually selected images with diverse backgrounds and contexts including images from Reddit and YouTube thumbnails.
+
+In terms of resources required, the dataset, consisting of 1,760 images is relatively small and is manageable to process with standard resources. The dataset size, even after augmentation, is unlikely to exceed the limits of local storage or memory. Therefore, the dataset does not require advanced techniques such as distributed processing (e.g., using Apache Spark or Dask) since the computational and storage demands are minimal. 
+Although no distributed processing will be required, the data will require multiple preprocessing steps which include:
+
+- Standardizing the data to a fixed image size (e.g., 224x224)
+- Normalizing the pixel values between -1 and 1
+- Applying data augmentation techniques including rotation, height and width shift, brightness adjustments, and zoom, to expand the training dataset
+
+It is important to acknowledge the limitations of this dataset which could include a lack of sufficient data, potentially leading to over-fitting during training and data imbalance. When this case occurs, it could skew model predictions and affect the model's accuracy. This will be addressed and resolved through data augmentation, mentioned above, through techniques including image rotation, horizontal and vertical flips, and cropping of images. By ensuring that each insect class contains 160 unique images and by expanding the dataset to include varied versions of all images, we effectively diversify the data set to avoid over-fitting and enhance the model performance.
+
+The final outcome of BugBot will provide interpretable insights to end users by providing accurate classifications of pests in their homes. We will utilize Streamlit to deliver a seamless user-friendly interface that takes in a user’s uploaded insect image and communicates the model output  – the predicted classification – through a text display on the screen. By using Streamlit as a platform for our model deployment, users will be able to receive their results in real time.
+
+
+
