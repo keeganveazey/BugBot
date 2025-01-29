@@ -48,6 +48,6 @@ It is important to acknowledge the limitations of this dataset which could inclu
 The final outcome of BugBot will provide interpretable insights to end users by providing accurate classifications of pests in their homes. We will utilize Streamlit to deliver a seamless user-friendly interface that takes in a user’s uploaded insect image and communicates the model output  – the predicted classification – through a text display on the screen. By using Streamlit as a platform for our model deployment, users will be able to receive their results in real time.
 
 # Setup Instructions
-TBA – will add when further information once in iteration 2.
+TBA – I will add further information once iteration 2 is complete.
 
 
