@@ -26,7 +26,7 @@ The majority of the BugBot dataset was scraped using a publicly available API fo
 
 For all collected images, it is also essential to eliminate duplicates or near-duplicates to prevent data leakage. Visual inspection techniques will be used to verify this in addition to image hashing as needed. Since no temporal or spatial dependencies exist in the dataset, random splitting for training, validation, and test subsets is appropriate. The validation set will guide hyper-parameter tuning, while the test set will provide an unbiased assessment of the model’s performance.
 
-Furthermore, it is important to note the unique nature of many pests that usually infest home environments in groups or colonies, including ants, termites, and bed bugs. Therefore, a direct effort was made to collect additional group images of insect infestations to be included in the dataset. After filtering, a range of approximately \textasciitilde\ 16\%-76\%, depending on the insect class, were kept from the original scraped data based on the above criteria. 
+Furthermore, it is important to note the unique nature of many pests that usually infest home environments in groups or colonies, including ants, termites, and bed bugs. Therefore, a direct effort was made to collect additional group images of insect infestations to be included in the dataset. After filtering, a range of approximately 16\%-76\%, depending on the insect class, was kept from the original scraped data based on the above criteria. 
 
 After web scraping, additional data was collected by performing manual Google searches for image results using insect keywords, and by taking advantage of community postings on websites such as Reddit to collect home-environment-specific images. After combining the scraped images and manual supplement, the resulting dataset includes 160 raw images across each of the 11 insect classes.
 
@@ -40,7 +40,7 @@ In terms of resources required, the dataset, consisting of 1,760 images is relat
 Although no distributed processing will be required, the data will require multiple preprocessing steps which include:
 
 - Standardizing the data to a fixed image size (e.g., 224x224)
-- Normalizing the pixel values between -1 and 1
+- Normalizing the pixel values
 - Applying data augmentation techniques including rotation, height and width shift, brightness adjustments, and zoom, to expand the training dataset
 
 It is important to acknowledge the limitations of this dataset which could include a lack of sufficient data, potentially leading to over-fitting during training and data imbalance. When this case occurs, it could skew model predictions and affect the model's accuracy. This will be addressed and resolved through data augmentation, mentioned above, through techniques including image rotation, horizontal and vertical flips, and cropping of images. By ensuring that each insect class contains 160 unique images and by expanding the dataset to include varied versions of all images, we effectively diversify the data set to avoid over-fitting and enhance the model performance.
@@ -48,6 +48,16 @@ It is important to acknowledge the limitations of this dataset which could inclu
 The final outcome of BugBot will provide interpretable insights to end users by providing accurate classifications of pests in their homes. We will utilize Streamlit to deliver a seamless user-friendly interface that takes in a user’s uploaded insect image and communicates the model output  – the predicted classification – through a text display on the screen. By using Streamlit as a platform for our model deployment, users will be able to receive their results in real time.
 
 # Setup Instructions
-TBA – I will add further information once iteration 2 is complete.
+Pip install requirements.txt to a virtual environment (Python 3.12)
+
+1. cd to repo location
+2. type: pip install virtualenv
+3. update pip if needed (type: pip install --upgrade pip)
+4. type: python -m venv bugbot_env
+5. type: source bugbot_env/bin/activate
+6. type: pip install -r requirements.txt
+7. done!
+
+(In progress...)
 
 
