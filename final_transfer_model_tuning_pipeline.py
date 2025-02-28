@@ -1,26 +1,35 @@
 
+# our commonly used functions
 from global_bug_bot_functions import  *
 
+# libraries for building convolutional neural network
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Input
+from tensorflow.keras.applications import MobileNetV2, Xception, DenseNet201
+from tensorflow.keras.models import Model
+
+# libraries for tuning models
 import keras_tuner as kt
 from tensorflow.keras.optimizers import Adam
 from keras_tuner import HyperParameters
 from tensorflow.keras import backend as K
-from tensorflow.keras.applications import MobileNetV2, Xception, DenseNet201
-from tensorflow.keras.models import Model
+from keras.callbacks import History, EarlyStopping
+
+
+# utility libraries
 import os
 import time
 import itertools
 
-# constants
+# data set constants
 TRAIN_GENERATOR = load_data(TRAIN_DIR)
 VAL_GENERATOR = load_data(VALID_DIR)
 TEST_GENERATOR = load_data(TEST_DIR, shuffle_flag=False)
 EVAL_VAL_GENERATOR = load_data(VALID_DIR, shuffle_flag=False)
 
-maximum_epochs = 100
+maximum_epochs = 64
+
 class TunableMobileNetV2(kt.HyperModel):
 
     def build(self, hp):
@@ -31,15 +40,14 @@ class TunableMobileNetV2(kt.HyperModel):
         # freeze the base model layers
         base_model.trainable = False
 
+        # tune dropout rate
         dropout_rate = hp.Float("dropout", min_value=0.2, max_value=0.5, step=0.1)
 
-        # global pooling similar to jute pest architecture
+        # global pooling and dropout layers included similar to jute pest architecture
         x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
-
-        # tune dropout rate
         x = Dropout(dropout_rate)(x)
 
-        # final classification layer
+        # final softmax probabilistic classification layer
         output_layer = Dense(TRAIN_GENERATOR.num_classes, activation='softmax')(x)
         model = Model(inputs=base_model.input, outputs=output_layer)
 
@@ -48,7 +56,6 @@ class TunableMobileNetV2(kt.HyperModel):
         optimizer = Adam(learning_rate=learning_rate)
 
         model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
-
         return model
 
     def fit(self, hp, model, *args, **kwargs):
@@ -57,7 +64,7 @@ class TunableMobileNetV2(kt.HyperModel):
 
 
 # BUILD BEST MODEL WITH TUNED PARAMS
-def build_best_model_transfer_learning(algorithm, model_name, hp_function):
+def build_best_model_transfer_learning(algorithm, model_name, hp_class = TunableMobileNetV2()):
     '''
     Param: algorithm - string in ['bayes', 'random_search'],
             model_name - string version of model
@@ -65,10 +72,15 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_function):
     based on validation accuracy
     '''
 
+    #note: number of hp combinations is high which is why these two algorithms were utilized in addition to
+    # literature review:
+    # 3 options for batch size, 4 options for learning rate, 4 options for dropout level = 48 combinations
+    # nCr = 11 C 3 = 165 possible unique hp combinations
+
     if algorithm == 'bayes':
         # Define the Bayesian tuner
         tuner = kt.BayesianOptimization(
-            TunableMobileNetV2(),
+            hp_class,
             objective='val_accuracy',  # tune by improving validation accuracy
             max_trials=20,  # num different hp combos to try
             executions_per_trial=1,  # run each model once
@@ -80,7 +92,7 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_function):
             TunableMobileNetV2(),  # Your model-building function
             objective='val_accuracy',  # Tune for validation accuracy
             max_trials=20,  # Number of different hyperparameter combinations to try
-            executions_per_trial=1,  # Number of times to run each model
+            executions_per_trial=1,  # Number of times to run each model hp combo for robustness -- try 3?
             directory='random_search_tuning',  # Directory to store tuning results
             project_name=f'random_search_hp_tuning_{model_name}'
         )
@@ -90,10 +102,15 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_function):
     # implement regularization via early stopping instead of tuning epochs iteratively
     # set changes smaller than 0.0001 to be understood as same as a change of 0
     # halt training when 5 epochs have passed without improvement, so make sure to save the weights from the best epoch
-    stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_loss',min_delta=0.00001, patience = 10)
+    patience = 10
+    stop_early = EarlyStopping(monitor='val_loss',min_delta=0.0001, patience = patience)
 
-    # search hp combo, go for maximum of 64 epochs
+
+    # search hp combo, go for maximum of max epochs
     tuner.search(TRAIN_GENERATOR, validation_data=VAL_GENERATOR, epochs = maximum_epochs, callbacks=[stop_early])
+
+    best_epochs = stop_early.stopped_epoch-patience+1 if stop_early.stopped_epoch > 0 else maximum_epochs
+    print('here: epoch number is ', best_epochs)
 
     # get best hps
     best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
@@ -105,7 +122,6 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_function):
 
     # make final model with the best drop out, learning rate, batch size and best epochs
     best_model = tuner.hypermodel.build(best_hps)
-    best_epochs = stop_early.stopped_epoch if stop_early.stopped_epoch > 0 else maximum_epochs
 
     best_hps_dict["best_epochs"] = best_epochs
     best_model_training_history = best_model.fit(TRAIN_GENERATOR, validation_data=VAL_GENERATOR,
@@ -135,7 +151,7 @@ def evaluate_model_and_save(model, filename):
 
 def get_model_and_algorithm_combos_dict():
     # dict of top 3 models to tune from eda without tuning and associated hp functions
-    models_to_tune ={'MobileNetV2': TunableMobileNetV2}
+    models_to_tune ={'MobileNetV2': TunableMobileNetV2()}
         # {'MobileNetV2': build_transfer_learning_MobileNetV2,
         #               'Xception': build_transfer_learning_Xception,
         #               'DenseNet201': build_transfer_learning_DenseNet201}
@@ -175,13 +191,13 @@ def main():
 
         this_algorithm = key[1]  # which hp algo to use
         this_model_name = key[0]  # which model to use
-        this_hp_function = funct  # which hp tuning func to use
+        this_hp_class = funct  # which hp tuning func to use
 
         # getting results for this model and optimization alg
         best_hps_dict, best_model, best_model_training_history = build_best_model_transfer_learning(
             algorithm=this_algorithm,
             model_name=this_model_name,
-            hp_function=this_hp_function)
+            hp_class=this_hp_class)
 
         # get final model metrics on test set and save trained model to unique file
 
