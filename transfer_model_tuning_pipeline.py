@@ -489,20 +489,41 @@ def main():
         print(
             f'Model: {this_model_name}, HP Algorithm: {this_algorithm}, test_loss: {this_test_loss}, test_acc: {this_test_acc}')
 
-        # save results in dictionary for comparison yeet
+        # save validation results in dictionary for comparison yeet
+        performance_model_metrics_dict_validation = evaluation_metrics(best_model, EVAL_VAL_GENERATOR, best_model_training_history)
 
-        best_validation_accuracy = best_hps_dict["accuracy"]
-        best_validation_precision = best_hps_dict["precision"]
-        best_validation_recall = best_hps_dict["recall"]
-        best_validation_f1_score = best_hps_dict["f1_score"]
+        best_validation_accuracy = performance_model_metrics_dict_validation["accuracy"]
+        best_validation_precision = performance_model_metrics_dict_validation["precision"]
+        best_validation_recall = performance_model_metrics_dict_validation["recall"]
+        best_validation_f1_score = performance_model_metrics_dict_validation["f1_score"]
+
+        # save test results in dictionary for comparison
+        performance_model_metrics_dict_test = evaluation_metrics(best_model, TEST_GENERATOR,
+                                                                 best_model_training_history)
+
+        test_precision = performance_model_metrics_dict_test["precision"]
+        test_recall = performance_model_metrics_dict_test["recall"]
+        test_f1_score = performance_model_metrics_dict_test["f1_score"]
+
+        best_lr = best_hps_dict["best_lr"]
+        best_dropout = best_hps_dict["best_dropout"]
+        best_batch_size = best_hps_dict["best_batch_size"]
+        best_epochs = best_hps_dict["best_epochs"]
 
         results_dict[f'{this_model_name}_{this_algorithm}'] = {
             "test_loss": this_test_loss,
             "test_accuracy": this_test_acc,
+            "best_lr":best_lr,
+            "best_dropout":best_dropout,
+            "best_batch_size": best_batch_size,
+            "best_epochs":best_epochs,
             "best_validation_accuracy": best_validation_accuracy,
             "best_validation_precision": best_validation_precision,
             "best_validation_recall": best_validation_recall,
-            "best_validation_f1_score": best_validation_f1_score
+            "best_validation_f1_score": best_validation_f1_score,
+            "test_precision": test_precision,
+            "test_recall": test_recall,
+            "test_f1_score": test_f1_score
         }
 
         print(f"Completed this model combo: {this_model_name}_{this_algorithm}\n\n")
