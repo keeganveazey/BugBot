@@ -40,6 +40,7 @@ In terms of resources required, the dataset, consisting of 1,760 images is relat
 Although no distributed processing will be required, the data will require multiple preprocessing steps which include:
 
 - Standardizing the data to a fixed image size (e.g., 224x224)
+- Removing duplicate data via image hashing
 - Normalizing the pixel values
 - Applying data augmentation techniques including rotation, height and width shift, brightness adjustments, and zoom, to expand the training dataset
 
