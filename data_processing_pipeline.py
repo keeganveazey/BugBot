@@ -12,9 +12,31 @@ import shutil
 # Directory constants
 RAW_IMG_DIR = "DATA/"
 
+# for reproducibility and consistent data split
+random.seed(2025)
+
+# Directory constants
+RAW_IMG_DIR = "DATA/"
+ALL_PROCESSED_DATA = "PROCESSED_DATA/"
+
+VALIDATION_DATA = f'{ALL_PROCESSED_DATA}VALIDATION_DATA/'
+TEST_DATA = f'{ALL_PROCESSED_DATA}TEST_DATA/'
+
+TRAINING_DATA = f'{ALL_PROCESSED_DATA}TRAINING_DATA/'
+AUGMENTED_OUTPUT_DIR = f'{TRAINING_DATA}TRAINING_AUGMENTED_DATA/'
+
+# List constants
+DIR_LIST = [ALL_PROCESSED_DATA, VALIDATION_DATA, TEST_DATA, \
+            TRAINING_DATA, AUGMENTED_OUTPUT_DIR]
+
+AUGMENTATION_LIST = ["original", "flipped_horizontally", "flipped_vertically", \
+                     "rotated_90", "rotated_180", "brightness_enhanced"]
+
+
 # Image extensions
 EXTENSIONS = ["*.jpg", "*.jpeg", "*.png"]
 
+# ------- FUNCTIONS -------
 
 def rename_files(directory):
     """
@@ -86,29 +108,6 @@ def process_duplicates(directory, threshold=0):
 
     return duplicate_images, non_duplicate_images
 
-
-# for reproducibility and consistent data split
-random.seed(2025)
-
-# Directory constants
-RAW_IMG_DIR = "DATA/"
-ALL_PROCESSED_DATA = "PROCESSED_DATA/"
-
-VALIDATION_DATA = f'{ALL_PROCESSED_DATA}VALIDATION_DATA/'
-TEST_DATA = f'{ALL_PROCESSED_DATA}TEST_DATA/'
-
-TRAINING_DATA = f'{ALL_PROCESSED_DATA}TRAINING_DATA/'
-AUGMENTED_OUTPUT_DIR = f'{TRAINING_DATA}TRAINING_AUGMENTED_DATA/'
-
-# List constants
-DIR_LIST = [ALL_PROCESSED_DATA, VALIDATION_DATA, TEST_DATA, \
-            TRAINING_DATA, AUGMENTED_OUTPUT_DIR]
-
-AUGMENTATION_LIST = ["original", "flipped_horizontally", "flipped_vertically", \
-                     "rotated_90", "rotated_180", "brightness_enhanced"]
-
-
-# ------- FUNCTIONS -------
 
 def make_directories(dir_lst):
     '''
