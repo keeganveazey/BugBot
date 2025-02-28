@@ -62,7 +62,8 @@ Complete the following if you do not already have an environment set up with our
 6. You should now see something that looks like **(bugbot_env)(base) ** in front of your curse in the terminal
 7. Type: pip install -r requirements.txt, press enter
 8. To run the notebook you are interested in, type jupyter notebook in the terminal of your now activated environment. After the browser opens, click the notebook of interest.
-9. Done!
+9. To run the preprocessing script, download the raw data in DATA provided in the repo. Type: python data_processing_pipeline.py
+10. Done!
 
 
 
