@@ -48,16 +48,21 @@ It is important to acknowledge the limitations of this dataset which could inclu
 The final outcome of BugBot will provide interpretable insights to end users by providing accurate classifications of pests in their homes. We will utilize Streamlit to deliver a seamless user-friendly interface that takes in a user’s uploaded insect image and communicates the model output  – the predicted classification – through a text display on the screen. By using Streamlit as a platform for our model deployment, users will be able to receive their results in real time.
 
 # Setup Instructions
+
 Pip install requirements.txt to a virtual environment (Python 3.12)
 
-1. cd to repo location
-2. type: pip install virtualenv
-3. update pip if needed (type: pip install --upgrade pip)
-4. type: python -m venv bugbot_env
-5. type: source bugbot_env/bin/activate
-6. type: pip install -r requirements.txt
-7. done!
+1. cd to repo location (change directory)
 
-(In progress...)
+Complete the following if you do not already have an environment set up with our requirements.txt:
+
+2. Type: pip install virtualenv, press enter.
+3. Update pip if needed (type: pip install --upgrade pip, press enter).
+4. Type: python -m venv bugbot_env, press enter
+5. Type: source bugbot_env/bin/activate, press enter
+6. You should now see something that looks like **(bugbot_env)(base) ** in front of your curse in the terminal
+7. Type: pip install -r requirements.txt, press enter
+8. To run the notebook you are interested in, type jupyter notebook in the terminal of your now activated environment. After the browser opens, click the notebook of interest.
+9. Done!
+
 
 
