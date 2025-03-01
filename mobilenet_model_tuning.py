@@ -1,4 +1,3 @@
-from final_transfer_model_tuning_pipeline import TunableXception
 # our commonly used functions
 from global_bug_bot_functions import  *
 
@@ -154,7 +153,7 @@ def evaluate_model_and_save(model, filename):
 def get_model_and_algorithm_combos_dict():
 
     # model to tune and associated hp class
-    models_to_tune ={'MobileNetV2': TunableXception()}
+    models_to_tune ={'MobileNetV2': TunableMobileNetV2()}
 
     hp_algorithms = ['bayes', 'random_search']
 
@@ -259,7 +258,7 @@ def main():
 
     # save final csv with all info!
     df_results = pd.DataFrame(results_dict)
-    df_results.to_csv('final_tuned_models_results_MobileNetV2_normalization.csv')
+    df_results.to_csv('final_tuned_models_results_MobileNetV2.csv')
 
 
 if __name__ == "__main__":
