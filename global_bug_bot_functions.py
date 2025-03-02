@@ -95,7 +95,7 @@ def plot_confusion_matrix(y_true, y_pred, class_indices):
     disp.plot(cmap=plt.cm.Blues, colorbar=True)
     plt.xticks(rotation=90)
     plt.title('Confusion Matrix')
-    plt.show()
+    plt.show(block=False)
     plt.close()
 
 
@@ -122,7 +122,7 @@ def plot_loss_curves(training_history):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.show()
+    plt.show(block=False)
     plt.close()
 
     # Plot training validation loss curve
@@ -133,7 +133,7 @@ def plot_loss_curves(training_history):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.show()
+    plt.show(block=False)
     plt.close()
 
 
@@ -186,7 +186,7 @@ def plot_roc_curve(y_true, y_pred_probs, class_indices):
         title="ROC Curve",
     )
     ax.legend(loc="lower right")
-    plt.show()
+    plt.show(block=False)
     plt.close()
 
     print(f"Macro-averaged One-vs-One ROC AUC score: {macro_roc_auc_ovo:.2f}")
