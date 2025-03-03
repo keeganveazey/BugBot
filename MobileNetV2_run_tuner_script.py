@@ -142,8 +142,18 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_class = Tunable
     # search hp combo, go for maximum of max epochs
     tuner.search(TRAIN_GENERATOR, validation_data=VAL_GENERATOR, epochs = INPUT_MAXIMUM_EPOCHS, callbacks=[stop_early])
 
-    best_epochs = stop_early.stopped_epoch-INPUT_PATIENCE+1 if stop_early.stopped_epoch > 0 else INPUT_MAXIMUM_EPOCHS
-    print('here: epoch number is ', best_epochs)
+    # best_epochs = stop_early.stopped_epoch-INPUT_PATIENCE+1 if stop_early.stopped_epoch > 0 else INPUT_MAXIMUM_EPOCHS
+    # print('here: epoch number is ', best_epochs)
+
+    # Get the best trial
+    best_trial = tuner.oracle.get_best_trials(num_trials=1)[0]
+
+    # Extract validation accuracy history and find the epoch with the best validation accuracy
+    best_epochs = INPUT_MAXIMUM_EPOCHS  # Default value in case of an issue
+    if best_trial and 'val_accuracy' in best_trial.metrics.metrics:
+        val_acc_history = best_trial.metrics.get_history('val_accuracy')  # Get list of val_acc per epoch
+        if val_acc_history:
+            best_epochs = val_acc_history.index(max(val_acc_history)) + 1  # Convert to 1-based index
 
     # get best hps
     best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
@@ -310,3 +320,5 @@ if __name__ == "__main__":
     # run 4) python MobileNetV2_run_tuner_script.py --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
 
     main()
+
+    # tested on: python MobileNetV2_run_tuner_script.py --epochs 5 --patience 3 --min_delta 0.01 --executions_per_trial 1 --max_trials 5
