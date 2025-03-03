@@ -307,5 +307,6 @@ if __name__ == "__main__":
     # run 1)  python MobileNetV2_run_tuner_script.py --epochs 30 --patience 5 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
     # run 2) python MobileNetV2_run_tuner_script.py --epochs 30 --patience 5 --min_delta 0.001 --executions_per_trial 3 --max_trials 60
     # run 3) python MobileNetV2_run_tuner_script.py --epochs 64 --patience 10 --min_delta 0.0001 --executions_per_trial 1 --max_trials 20
+    # run 4) python MobileNetV2_run_tuner_script.py --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
 
     main()
