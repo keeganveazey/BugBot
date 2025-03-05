@@ -125,6 +125,7 @@ def plot_loss_curves(training_history):
     plt.xlim(left=0)  # Set x-axis to start at 0
     plt.ylim(bottom=0)  # Set y-axis to start at 0
     plt.show(block=False)
+
     plt.close()
 
     # Plot training validation loss curve
@@ -135,6 +136,8 @@ def plot_loss_curves(training_history):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
+    plt.xlim(left=0)  # Set x-axis to start at 0
+    plt.ylim(bottom=0)  # Set y-axis to start at 0
     plt.show(block=False)
     plt.close()
 
