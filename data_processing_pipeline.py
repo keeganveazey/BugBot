@@ -12,31 +12,9 @@ import shutil
 # Directory constants
 RAW_IMG_DIR = "DATA/"
 
-# for reproducibility and consistent data split
-random.seed(2025)
-
-# Directory constants
-RAW_IMG_DIR = "DATA/"
-ALL_PROCESSED_DATA = "PROCESSED_DATA/"
-
-VALIDATION_DATA = f'{ALL_PROCESSED_DATA}VALIDATION_DATA/'
-TEST_DATA = f'{ALL_PROCESSED_DATA}TEST_DATA/'
-
-TRAINING_DATA = f'{ALL_PROCESSED_DATA}TRAINING_DATA/'
-AUGMENTED_OUTPUT_DIR = f'{TRAINING_DATA}TRAINING_AUGMENTED_DATA/'
-
-# List constants
-DIR_LIST = [ALL_PROCESSED_DATA, VALIDATION_DATA, TEST_DATA, \
-            TRAINING_DATA, AUGMENTED_OUTPUT_DIR]
-
-AUGMENTATION_LIST = ["original", "flipped_horizontally", "flipped_vertically", \
-                     "rotated_90", "rotated_180", "brightness_enhanced"]
-
-
 # Image extensions
 EXTENSIONS = ["*.jpg", "*.jpeg", "*.png"]
 
-# ------- FUNCTIONS -------
 
 def rename_files(directory):
     """
@@ -108,6 +86,29 @@ def process_duplicates(directory, threshold=0):
 
     return duplicate_images, non_duplicate_images
 
+
+# for reproducibility and consistent data split
+random.seed(2025)
+
+# Directory constants
+RAW_IMG_DIR = "DATA/"
+ALL_PROCESSED_DATA = "PROCESSED_DATA/"
+
+VALIDATION_DATA = f'{ALL_PROCESSED_DATA}VALIDATION_DATA/'
+TEST_DATA = f'{ALL_PROCESSED_DATA}TEST_DATA/'
+
+TRAINING_DATA = f'{ALL_PROCESSED_DATA}TRAINING_DATA/'
+AUGMENTED_OUTPUT_DIR = f'{TRAINING_DATA}TRAINING_AUGMENTED_DATA/'
+
+# List constants
+DIR_LIST = [ALL_PROCESSED_DATA, VALIDATION_DATA, TEST_DATA, \
+            TRAINING_DATA, AUGMENTED_OUTPUT_DIR]
+
+AUGMENTATION_LIST = ["original", "flipped_horizontally", "flipped_vertically", \
+                     "rotated_90", "rotated_180", "brightness_enhanced"]
+
+
+# ------- FUNCTIONS -------
 
 def make_directories(dir_lst):
     '''
@@ -448,6 +449,7 @@ def perform_data_augmentation(training_folders_lst):
 # Map of filename patterns to the correct class name
 INSECT_CLASS_MAPPING = {
     "weevil": "adult_rice_weevil",
+    "centipede": "house_centipede",
     "house_spider": "american_house_spider",
     "house_": "american_house_spider",
     "bedbug": "bedbug",
@@ -455,7 +457,6 @@ INSECT_CLASS_MAPPING = {
     "carpenterant": "carpenter_ant",
     "cellar": "cellar_spider",
     "flea": "flea",
-    "centipede": "house_centipede",
     "silverfish": "silverfish",
     "termite": "subterranean_termite",
     "tick": "tick",
@@ -505,16 +506,22 @@ def main():
     print("\nProcessing duplicate images---------------")
     duplicate_images, non_duplicate_images = process_duplicates(RAW_IMG_DIR)
 
+    input('pause 1')
+
     print("\nHashing and removing duplicate images process complete.")
     print(f"Total duplicates removed: {len(duplicate_images)}")
+
 
     # 1) make directories that DNE
     print("---------------START OF MAKING DIRECTORIES AS NEEDED---------------")
     make_directories(DIR_LIST)
 
+    input('pause 2')
+
     # 2) get insect folders list
     print("---------------GETTING INSECT FOLDERS---------------")
     insect_folders = get_folders(RAW_IMG_DIR)
+
 
     # 3) resize and recolor data
     print("---------------PREPROCESSING RAW IMAGE DATA---------------")
@@ -523,6 +530,7 @@ def main():
     # 4) split data before augmentation to prevent data leakage
     print("---------------SPLITTING DATA (TRAIN/TEST/VALIDATION) BEFORE AUGMENTATION---------------")
     processed_insect_folders = get_folders(ALL_PROCESSED_DATA)
+
     processed_insect_folders = [f for f in processed_insect_folders if 'DATA' not in f]
 
     split_data_into_train_valid_test(processed_insect_folders)
@@ -543,6 +551,8 @@ def main():
     PROCESSED_DATA = "PROCESSED_DATA"
     TEST_DATA = os.path.join(PROCESSED_DATA, "TEST_DATA")
     VALIDATION_DATA = os.path.join(PROCESSED_DATA, "VALIDATION_DATA")
+
+    input('pause 3')
 
     # Organize the data in the TEST_DATA and VALIDATION_DATA folders
     organize_data(TEST_DATA)
