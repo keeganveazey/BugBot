@@ -1,0 +1,14 @@
+,Xception_bayes,Xception_random_search
+test_loss,1.008272409439087,1.0118727684020996
+test_accuracy,0.6636363863945007,0.668181836605072
+best_lr,0.001,0.001
+best_dropout,0.30000000000000004,0.2
+best_batch_size,16.0,16.0
+best_epochs,1.0,1.0
+best_validation_accuracy,0.668,0.675
+best_validation_precision,0.719,0.708
+best_validation_recall,0.668,0.675
+best_validation_f1_score,0.68,0.685
+test_precision,0.704,0.715
+test_recall,0.664,0.668
+test_f1_score,0.674,0.68
