@@ -194,7 +194,7 @@ def plot_roc_curve(y_true, y_pred_probs, class_indices):
     plt.show(block=False)
     plt.close()
 
-    print(f"Macro-averaged One-vs-One ROC AUC score: {macro_roc_auc_ovo:.2f}")
+    print(f"Macro-averaged One-vs-Rest ROC AUC score: {macro_roc_auc_ovo:.2f}")
     return macro_roc_auc_ovo
 
 
