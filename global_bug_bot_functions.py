@@ -112,33 +112,49 @@ def plot_loss_curves(training_history):
     val_accuracy = training_history.history.get('val_accuracy', [])
     loss = training_history.history.get('loss', [])
     val_loss = training_history.history.get('val_loss', [])
-    epochs = range(len(accuracy))
+    epochs =  range(len(training_history.history['accuracy']))
+
+
 
     # Plot training validation accuracy curve
     plt.figure(figsize=(8, 6))
-    plt.plot(epochs, accuracy, 'bo', label='Training Accuracy')
-    plt.plot(epochs, val_accuracy, 'b', label='Validation Accuracy')
+    plt.plot(epochs, accuracy, color='orange', linestyle='-', label='Training Accuracy')
+    plt.plot(epochs, val_accuracy, color='blue', linestyle='-', label='Validation Accuracy')
     plt.title('Training and Validation Accuracy')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.xlim(left=0)  # Set x-axis to start at 0
-    plt.ylim(bottom=0)  # Set y-axis to start at 0
+
+    y_min = 0
+    y_max = 1
+    step_size = 0.1
+
+    plt.yticks(np.arange(y_min, y_max + step_size, step_size))
+
     plt.show(block=False)
 
     plt.close()
 
     # Plot training validation loss curve
     plt.figure(figsize=(8, 6))
-    plt.plot(epochs, loss, 'bo', label='Training Loss')
-    plt.plot(epochs, val_loss, 'b', label='Validation Loss')
+    plt.plot(epochs, loss,color='orange', linestyle='-', label='Training Loss')
+    plt.plot(epochs, val_loss, color='blue', linestyle='-', label='Validation Loss')
     plt.title('Training and Validation Loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.xlim(left=0)  # Set x-axis to start at 0
-    plt.ylim(bottom=0)  # Set y-axis to start at 0
+
+    y_min = 0
+    y_max = max(max(loss, default=0), max(val_loss, default=0))  # Get max loss dynamically
+
+    step_size = 0.1
+
+    plt.yticks(np.arange(y_min, y_max + step_size, step_size))  # Set custom tick
+
     plt.show(block=False)
+
+    # plt.xticks(np.arange(len(accuracy)), np.arange(1, len(accuracy) + 1))
+
     plt.close()
 
 
@@ -177,7 +193,7 @@ def plot_roc_curve(y_true, y_pred_probs, class_indices):
 
     # Macro average reference: https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
     # Macro average ROC AUC score using OvR strategy
-    macro_roc_auc_ovo = roc_auc_score(y_true,
+    macro_roc_auc_ovr = roc_auc_score(y_true,
                                       y_pred_probs,
                                       multi_class="ovr",
                                       average="macro")
@@ -194,8 +210,8 @@ def plot_roc_curve(y_true, y_pred_probs, class_indices):
     plt.show(block=False)
     plt.close()
 
-    print(f"Macro-averaged One-vs-Rest ROC AUC score: {macro_roc_auc_ovo:.2f}")
-    return macro_roc_auc_ovo
+    print(f"Macro-averaged One-vs-Rest ROC AUC score: {macro_roc_auc_ovr:.2f}")
+    return macro_roc_auc_ovr
 
 
 def evaluation_metrics(model, generator, training_history):
@@ -245,7 +261,7 @@ def evaluation_metrics(model, generator, training_history):
     plot_loss_curves(training_history)
 
     # ROC AUC OvR score
-    macro_roc_auc_ovo = plot_roc_curve(y_true, y_pred_probs, class_indices)
+    macro_roc_auc_ovr = plot_roc_curve(y_true, y_pred_probs, class_indices)
 
     # Get metrics from the classification report
     precision = round(report_df.loc["macro avg", "precision"], 3)
