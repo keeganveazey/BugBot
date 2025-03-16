@@ -12,7 +12,7 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "false"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 # Load final DenseNet201 model
-model = tf.keras.models.load_model('best_model_densenet201.h5', compile=False)
+model = tf.keras.models.load_model('densenet201_best_model_bayes_optimization.h5', compile=False)
 
 # Labels
 labels = [
