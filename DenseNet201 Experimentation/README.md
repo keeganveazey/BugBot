@@ -1,3 +1,4 @@
+### Experiments ran for DenseNet201 to try to improve evaluation metrics
 ### Test_1: Batch normalization before activation function (ReLU)
 ### Test_2: Activation function (ReLU) after batch normalization
 ### Test_3: Tried replicating this diagram that they optimized for their research
