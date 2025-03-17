@@ -31,7 +31,7 @@ label_map = {
     "adult_rice_weevil": "Rice Weevil",
     "house_centipede": "House Centipede",
     "american_house_spider": "American House Spider",
-    "bedbug": "Bed bug",
+    "bedbug": "Bed Bug",
     "brown_stink_bug": "Brown Stink Bug",
     "carpenter_ant": "Carpenter Ant",
     "cellar_spider": "Cellar Spider",
