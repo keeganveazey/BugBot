@@ -4,8 +4,6 @@ from PIL import Image
 import tensorflow as tf
 tf.config.set_visible_devices([], 'GPU')
 import os
-import os
-import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "false"
@@ -61,8 +59,7 @@ def preprocess(image):
 # reference: https://github.com/pytholic/streamlit-image-classification/blob/main/app/app.py
 def predict(image):
     '''
-    Param:
-        image: uploaded user image
+    Param: user uploaded image
 
     Function: preprocesses image & runs model prediction
 
