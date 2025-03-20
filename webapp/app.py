@@ -59,7 +59,8 @@ def preprocess(image):
 # reference: https://github.com/pytholic/streamlit-image-classification/blob/main/app/app.py
 def predict(image):
     '''
-    Param: user uploaded image
+    Param:
+        image: uploaded user image
 
     Function: preprocesses image & runs model prediction
 
