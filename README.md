@@ -42,6 +42,7 @@ Although no distributed processing will be required, the data will require multi
 - Standardizing the data to a fixed image size (e.g., 224x224)
 - Removing duplicate data via image hashing
 - Normalizing the pixel values
+- Adding padding to the images
 - Applying data augmentation techniques including rotation, height and width shift, brightness adjustments, and zoom, to expand the training dataset
 
 It is important to acknowledge the limitations of this dataset which could include a lack of sufficient data, potentially leading to over-fitting during training and data imbalance. When this case occurs, it could skew model predictions and affect the model's accuracy. This will be addressed and resolved through data augmentation, mentioned above, through techniques including image rotation, horizontal and vertical flips, and cropping of images. By ensuring that each insect class contains 160 unique images and by expanding the dataset to include varied versions of all images, we effectively diversify the data set to avoid over-fitting and enhance the model performance.
