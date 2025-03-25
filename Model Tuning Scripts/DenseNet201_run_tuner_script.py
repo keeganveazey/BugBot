@@ -33,6 +33,7 @@ import os
 import sys
 import time
 import itertools
+import pandas as pd
 
 # our commonly used functions
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
