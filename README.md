@@ -53,19 +53,27 @@ The final outcome of BugBot will provide interpretable insights to end users by 
 
 Pip install requirements.txt to a virtual environment (Python 3.12)
 
-1. cd to repo location (change directory)
+1. **cd** to repo location (change directory)
 
 Complete the following if you do not already have an environment set up with our requirements.txt:
 
-2. Type: pip install virtualenv, press enter.
-3. Update pip if needed (type: pip install --upgrade pip, press enter).
-4. Type: python -m venv bugbot_env, press enter
-5. Type: source bugbot_env/bin/activate, press enter
+2. Type: **pip install virtualenv**, press enter.
+3. Update pip if needed (type: **pip install --upgrade pip**, press enter).
+4. Type: **python -m venv bugbot_env**, press enter
+5. Type: **source bugbot_env/bin/activate**, press enter
 6. You should now see something that looks like **(bugbot_env)(base) ** in front of your curse in the terminal
-7. Type: pip install -r requirements.txt, press enter
+7. Type: **pip install -r requirements.txt**, press enter
 8. To run the notebook you are interested in, type jupyter notebook in the terminal of your now activated environment. After the browser opens, click the notebook of interest.
-9. To run the preprocessing script, download the raw data in DATA provided in the repo. Type: python data_processing_pipeline.py
-10. Done!
+9. To run the preprocessing script, download the raw data in DATA provided in the repo. Type: **python data_processing_pipeline.py**
+10. To run the tuner scripts, first run the data processing pipeline in step 9. Then navigate to your terminal, and ensure you are in the bugbot-main directory. To run a tuner script, type the following:
+
+    **python "Model Tuning Scripts/{model}_run_tuner_script.py" --epochs {some int} --patience {some int} --min_delta {some float} --executions_per_trial {some int} --max_trials {some int}**
+
+    --> replace content with '{}' with the values you are hoping to run
+    --> example: **python "Model Tuning Scripts/DenseNet201_run_tuner_script.py" --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20**
+    
+12. Done!
+
 
 
 
