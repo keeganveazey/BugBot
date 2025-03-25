@@ -33,11 +33,18 @@ NORM_DATAGEN = ImageDataGenerator(rescale=1. / 255)
 
 
 def load_data(directory, shuffle_flag=True):
-    '''
-    Param:
-        - directory - str,
-        - shuffle_flag - boolean, introduces constrolled stochasticity
-    '''
+    """
+    Makes data generators for efficient data loading throughout the project
+
+    Parameters:
+        directory (str) - raw data directory
+        shuffle_flag (boolean) - introduces controlled stochasticity in keras directory flow
+
+    Returns:
+        (function) keras data generator
+    """
+
+    # option to apply normalization to dataset if desired
     if NORMALIZE_FLAG == True:
         generator = NORM_DATAGEN.flow_from_directory(
             directory,
@@ -45,6 +52,7 @@ def load_data(directory, shuffle_flag=True):
             batch_size=BATCH_SIZE,
             class_mode='categorical', shuffle=shuffle_flag)
         return generator
+
     else:
         generator = NO_FRILLS_DATAGEN.flow_from_directory(
             directory,
@@ -55,37 +63,37 @@ def load_data(directory, shuffle_flag=True):
 
 
 def create_classification_report(y_true, y_pred, class_indices):
-    '''
-    Params:
-        y_true: true class labels
-        y_pred: predicted class labels
-        class_indices: mapping of class labels to class names.
+    """
+    Generates a classification report including precision, recall, F1-score, and
+    accuracy for each class outputs the report as a DataFrame for further analysis
 
-    Function:
-        generates a classification report including precision, recall, F1-score, and accuracy for each class
-        outputs the report as a DataFrame for further analysis
+    Parameters:
+        y_true (list) - true class labels
+        y_pred (list) - predicted class labels
+        class_indices (dict) - mapping of class labels to class names
 
     Returns:
-        classification report as a dataframe
-    '''
+        (Dataframe) classification report
+    """
+
     report = classification_report(y_true, y_pred, target_names=list(class_indices.keys()), output_dict=True)
     report_df = pd.DataFrame(report).transpose()
     print("Classification Report:")
     display(report_df)
+
     return report_df
 
 
 def plot_confusion_matrix(y_true, y_pred, class_indices):
-    '''
-    Params:
-        y_true: true class labels
-        y_pred: predicted class labels
-        class_indices: Mapping of class labels to class names
+    """
+    Plots a confusion matrix
 
-    Function:
-        Plots a confusion matrix
+    Parameters:
+        y_true (list) - true class labels
+        y_pred (list) - predicted class labels
+        class_indices (dict) - mapping of class labels to class names
+    """
 
-    '''
     # Confusion matrix
     cm = confusion_matrix(y_true, y_pred)
 
@@ -100,14 +108,13 @@ def plot_confusion_matrix(y_true, y_pred, class_indices):
 
 
 def plot_loss_curves(training_history):
-    '''
-    Params:
-        training_history: object from model.fit() training history containing metrics accuracy and loss
+    """
+    Plots training and validation accuracy and loss curves to evaluate model performance over epochs
 
-    Function:
-        plots training and validation accuracy and loss curves to evaluate model performance over epochs
+    Parameters:
+        training_history (keras model fit object) - object from model.fit() training history containing metrics accuracy and loss
 
-    '''
+    """
     accuracy = training_history.history.get('accuracy', [])
     val_accuracy = training_history.history.get('val_accuracy', [])
     loss = training_history.history.get('loss', [])
@@ -159,19 +166,18 @@ def plot_loss_curves(training_history):
 
 
 def plot_roc_curve(y_true, y_pred_probs, class_indices):
-    '''
-    Params:
-        y_true: true class labels
-        y_pred_probs: predicted probabilities for each class
-        class_indices: mapping of class labels to class names
+    """
+    Plots the receiver operating characteristic (ROC) curve for each class and
+    calculates the macro-averaged one vs rest (OvR) ROC AUC score
 
-    Function:
-        plots the receiver operating characteristic (ROC) curve for each class and calculates the macro-averaged
-        one vs rest (OvR) ROC AUC score
+    Parameters:
+        y_true (list) - true class labels
+        y_pred_probs (list) - predicted class labels
+        class_indices (dict) - mapping of class labels to class names
 
     Returns:
-        macro averaged one vs rest ROC AUC score
-    '''
+        (float) macro averaged one vs rest ROC AUC score
+    """
 
     # ROC AUC reference: https://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html
     # ROC curve and AUC for multi-class classification
@@ -215,30 +221,27 @@ def plot_roc_curve(y_true, y_pred_probs, class_indices):
 
 
 def evaluation_metrics(model, generator, training_history):
-    '''
-    Params:
-        model: trained model
-        generator: data generator for the evaluation set
-        training_history: object from model.fit() training history containing metrics accuracy and loss
+    """
+    Combines evaluation metrics (classification report, confusion matrix, training curves, and ROC curve)
+    and outputs key metrics (accuracy, precision, recall, and F1-score)
 
-    Function:
-        combines evaluation metrics (classification report, confusion matrix, training curves, and ROC curve)
-        outputs key metrics: accuracy, precision, recall, and F1-score
+    Parameters:
+        model (keras model) - trained model
+        generator (function) - data generator for the evaluation set
+        training_history (keras model fit object) - object from model.fit() training history containing metrics accuracy and loss
 
     Returns:
-        dictionary containing:
+        (dict) with following keys:
             accuracy: model accuracy on the evaluation data
             precision: macro averaged precision score
             recall: macro averaged recall score
             f1_score: macro averaged F1 score
             classification_report_df: classification report as a dataframe
-
-    Outputs:
-        confusion matrix plot
-        loss plots
-        macro average ROC curve plot
-        macro averaged one vs rest ROC AUC score
-    '''
+        (png) confusion matrix plot
+        (png) loss plots
+        (png) macro average ROC curve plot
+        (png) macro averaged one vs rest ROC AUC score
+    """
 
     # Get true labels
     y_true = generator.classes
