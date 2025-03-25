@@ -1,3 +1,12 @@
+# FILE DESCRIPTION: -------------------------------------------------------
+
+# This file includes common functions used by multiple files in our project directory
+# including data loading, visualization, and evaluation of model training + results
+
+# --------------------------------------------------------------------------
+
+
+
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Input
