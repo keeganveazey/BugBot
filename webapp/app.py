@@ -33,9 +33,14 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 IMAGE_SIZE = (224, 224)  
 FILE_TYPES = ["jpg", "jpeg", "png"]
+MODEL_PATH = "densenet201_best_model_bayes_optimization.h5"
 
 # Load final DenseNet201 model
-model = tf.keras.models.load_model('densenet201_best_model_bayes_optimization.h5', compile=False)
+try:
+    model = tf.keras.models.load_model(MODEL_PATH, compile=False)
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    model = None
 
 # Label mappings
 labels = [
@@ -66,6 +71,10 @@ label_map = {
     "tick": "Tick"
 }
 
+
+
+# ----------- FUNCTIONS ----------------
+
 def preprocess(image):
     '''
     Preprocesses user uploaded image for model prediction
@@ -77,22 +86,32 @@ def preprocess(image):
     Returns: preprocessed image as an array
     '''
 
-    # Image resize
-    image = image.resize(IMAGE_SIZE)
+    # Error check
+    if not isinstance(image, Image.Image):
+        raise TypeError("Expected image to be a PIL.Image instance.")
+    
+    try:
+        # Image size
+        image = image.resize(IMAGE_SIZE)  
 
-    # Normalize pixel values to [0, 1]
-    image = np.array(image) / 255.0 
-
-    # Convert image to RGBA to RGB
-    if image.shape[-1] == 4: 
-        image = image[..., :3]
-    # Reshape for keras model input (1, 224, 224, 3)
-    image = np.expand_dims(image, axis=0) 
-    return image
+        # Normalize pixel values to [0, 1]
+        image = np.array(image) / 255.0  
+        
+        # Convert image to RGBA to RGB
+        if image.shape[-1] == 4: 
+            image = image[..., :3]
+        
+        # Reshape for keras model input (1, 224, 224, 3)
+        return np.expand_dims(image, axis=0)
+    
+    except Exception as e:
+        raise ValueError(f"Error in preprocessing image: {e}")
 
 
 def predict(image):
     '''
+    Runs model prediction on the uploaded user image
+
     Param: uploaded user image
 
     Function: preprocesses image & runs model prediction
@@ -102,22 +121,22 @@ def predict(image):
     Reference: https://github.com/pytholic/streamlit-image-classification/blob/main/app/app.py
     '''
 
+    # Error check
+    if model is None:
+        raise RuntimeError("Model is not loaded. Please place model into webapp folder.")
+    
     try:
         # Image must be preprocessed first
         image_array = preprocess(image)
 
         # Predictions using our final DenseNet201 model, returns array of probabilities for each class
         probabilities = model.predict(image_array)[0]
-
+        
         # Top 3 probability predictions indices
-        top_indices = np.argsort(probabilities)[::-1][:3]
-
-        # Each prediction with its corresponding label
-        predictions = [(probabilities[i], label_map.get(labels[i], labels[i])) for i in top_indices]
-        return predictions
+        top_indices = np.argsort(probabilities)[::-1][:3]  # Top 3 indices
+        return [(float(probabilities[i]), label_map.get(labels[i], labels[i])) for i in top_indices]
     except Exception as e:
-        st.error(f"Prediction error: {e}")
-        return []
+        raise RuntimeError(f"Error in prediction: {e}")
 
 
 def main():
@@ -125,7 +144,7 @@ def main():
     Main function that runs the Streamlit web application
     """
 
-    # UI steup: title, subheader, paragraph
+    # UI setup: title, subheader, paragraph
     st.title("BugBot")
     st.subheader("A tool to classify those nasty pests in your home. 🏠🪲")
     st.write("""
@@ -133,36 +152,39 @@ def main():
     By utilizing a balanced and diverse dataset of insect images, BugBot provides a reliable, accurate, and user-friendly tool 
     that helps users classify insects in their homes quickly and confidently. This eliminates the hassle of misclassifying insects or spending 
     time searching for information on the internet.
-
     """)
 
     # File uploader and image display
-    uploaded_file = st.file_uploader("Upload an insect image...", type = FILE_TYPES)
-
-    predictions = []
-
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_container_width=True)
-        predictions = predict(image)
-
-    if predictions:
-        st.write("### Top 3 Predictions:")
-        for i, (prob, label) in enumerate(predictions):
-            st.write(f"{i+1}. {label} ({prob*100:.2f}%)")
-            st.progress(float(prob))
-    else:
-        st.write("No predictions.")
-
-     # --------------------------------------------------------------------------
-    # TEST CASE / EXPECTED RESULTS when this script is run:
-        
-        # need to add test cases
-
-        # Streamlit running in browser
+    uploaded_file = st.file_uploader("Upload an insect image...", type=FILE_TYPES)
     
-        # time completion: <10 seconds to run the script and Streamlit, 2 seconds to upload and classify image
+    predictions = []
+    
+    if uploaded_file:
+        try:
+            image = Image.open(uploaded_file).convert("RGB")
+            st.image(image, caption="Uploaded Image", use_container_width=True)
+            
+            predictions = predict(image)
+            
+            if predictions:
+                st.write("### Top 3 Predictions:")
+                for i, (prob, label) in enumerate(predictions):
+                    st.write(f"{i+1}. {label} ({prob*100:.2f}%)")
+                    st.progress(float(prob))
+            else:
+                st.write("No predictions available.")
+        except Exception as e:
+            st.error(f"Error processing image: {e}")
+
+
     # --------------------------------------------------------------------------
+    # TEST CASE / EXPECTED RESULTS when this script is run:
+
+    # Streamlit running in browser
+    
+    # time completion: <10 seconds to run the script and Streamlit, 2 seconds to upload and classify image
+    # --------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     main()
