@@ -154,19 +154,26 @@ def main():
     time searching for information on the internet.
     """)
 
-    # File uploader and image display
+    # 1) Upload image feature, user uploads image based on accepted file types
     uploaded_file = st.file_uploader("Upload an insect image...", type=FILE_TYPES)
-    
+
+    # Stores prediction results
     predictions = []
     
+    # 2) Check if user uploaded a file
     if uploaded_file:
         try:
+            # Converts image to RGB
             image = Image.open(uploaded_file).convert("RGB")
+
+            # Displays image in Streamlit
             st.image(image, caption="Uploaded Image", use_container_width=True)
-            
+
+            # Runs prediction on uploaded image and stores the results
             predictions = predict(image)
             
             if predictions:
+                # Prints out top 3 predictions with their probabilities
                 st.write("### Top 3 Predictions:")
                 for i, (prob, label) in enumerate(predictions):
                     st.write(f"{i+1}. {label} ({prob*100:.2f}%)")
