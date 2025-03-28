@@ -1,18 +1,43 @@
+# FILE DESCRIPTION: -------------------------------------------------------
+
+# This file runs the Streamlit web application. Users are able to uploadn an
+# image of an insect and will classify it using our custom DenseNet201 model.
+# The model predicts the insect type and provide the top three predictions.
+
+# --------------------------------------------------------------------------
+
+
+
+# ----------- IMPORTS ----------------
+
 import numpy as np
 import streamlit as st
 from PIL import Image
 import tensorflow as tf
-tf.config.set_visible_devices([], 'GPU')
 import os
+tf.config.set_visible_devices([], 'GPU')
+
+
+
+# ----------- SETTINGS ----------------
+
+# GPU and tensorflow settings
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "false"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
+
+
+# ----------- CONSTANTS ----------------
+
+IMAGE_SIZE = (224, 224)  
+FILE_TYPES = ["jpg", "jpeg", "png"]
+
 # Load final DenseNet201 model
 model = tf.keras.models.load_model('densenet201_best_model_bayes_optimization.h5', compile=False)
 
-# Labels
+# Label mappings
 labels = [
     "adult_rice_weevil",
     "house_centipede",
@@ -43,29 +68,40 @@ label_map = {
 
 def preprocess(image):
     '''
+    Preprocesses user uploaded image for model prediction
+
     Param: user uploaded image
 
     Function: resizes, normalizes, converts RGBA to RGB, & adds batch dimension
     
-    Returns: preprocessed image as array
+    Returns: preprocessed image as an array
     '''
-    image = image.resize((224, 224))
-    image = np.array(image) / 255.0  # normalize to [0, 1]
-    if image.shape[-1] == 4: # If image is RGBA
-        image = image[..., :3]  # change to RGB
-    image = np.expand_dims(image, axis=0)  # since it's a keras model, need (1, 224, 224, 3) input
+
+    # Image resize
+    image = image.resize(IMAGE_SIZE)
+
+    # Normalize pixel values to [0, 1]
+    image = np.array(image) / 255.0 
+
+    # Convert image to RGBA to RGB
+    if image.shape[-1] == 4: 
+        image = image[..., :3]
+    # Reshape for keras model input (1, 224, 224, 3)
+    image = np.expand_dims(image, axis=0) 
     return image
 
-# reference: https://github.com/pytholic/streamlit-image-classification/blob/main/app/app.py
+
 def predict(image):
     '''
-    Param:
-        image: uploaded user image
+    Param: uploaded user image
 
     Function: preprocesses image & runs model prediction
 
-    Returns: predictions w their probabilities
+    Returns: list[tuple[float, str]] top 3 predictions  with their probabilities
+    
+    Reference: https://github.com/pytholic/streamlit-image-classification/blob/main/app/app.py
     '''
+
     try:
         # Image must be preprocessed first
         image_array = preprocess(image)
@@ -84,8 +120,12 @@ def predict(image):
         return []
 
 
-def app():
-    # Title, subheader, paragraph
+def main():
+    """
+    Main function that runs the Streamlit web application
+    """
+
+    # UI steup: title, subheader, paragraph
     st.title("BugBot")
     st.subheader("A tool to classify those nasty pests in your home. 🏠🪲")
     st.write("""
@@ -97,7 +137,7 @@ def app():
     """)
 
     # File uploader and image display
-    uploaded_file = st.file_uploader("Upload an insect image...", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Upload an insect image...", type = FILE_TYPES)
 
     predictions = []
 
@@ -114,5 +154,15 @@ def app():
     else:
         st.write("No predictions.")
 
+     # --------------------------------------------------------------------------
+    # TEST CASE / EXPECTED RESULTS when this script is run:
+        
+        # need to add test cases
+
+        # Streamlit running in browser
+    
+        # time completion: <10 seconds to run the script and Streamlit, 2 seconds to upload and classify image
+    # --------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    app()
+    main()
