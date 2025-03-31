@@ -200,7 +200,7 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_class = Tunable
         # Define the Bayesian tuner
         tuner = kt.BayesianOptimization(
             hp_class,
-            objective='val_accuracy',  # tune by improving validation accuracy
+            objective= 'val_loss' #'val_accuracy',  # tune by improving validation accuracy
             max_trials=INPUT_MAX_TRIALS,  # num different hp combos to try
             executions_per_trial=INPUT_EXECUTIONS_PER_TRIAL,  # run each model once
             directory='bayesian_tuning',
@@ -209,7 +209,7 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_class = Tunable
     elif algorithm == 'random_search':
         tuner = kt.RandomSearch(
             hp_class,  # Your model-building function
-            objective='val_accuracy',  # Tune for validation accuracy
+            objective= 'val_loss' #'val_accuracy',  # Tune for validation accuracy
             max_trials=INPUT_MAX_TRIALS,  # Number of different hyperparameter combinations to try
             executions_per_trial=INPUT_EXECUTIONS_PER_TRIAL,  # Number of times to run each model hp combo for robustness -- try 3?
             directory='random_search_tuning',  # Directory to store tuning results
