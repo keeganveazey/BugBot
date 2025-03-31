@@ -1,7 +1,18 @@
+# FILE DESCRIPTION: -------------------------------------------------------
+
+# This file runs our customized densenet transfer learning model
+# with hyperparameter optimization tuning. It saves the best hyperparameter
+# combinations results to a dictionary, and provides functionality to
+# build the best densenet model with the best hyperparameteres
+
+# --------------------------------------------------------------------------
+
+# IMPORTS
+
+# make parameters easily changeable from command line for file run
 import argparse
 
-# our commonly used functions
-from global_bug_bot_functions import  *
+
 
 # libraries for building convolutional neural network
 import tensorflow as tf
@@ -17,11 +28,16 @@ from keras_tuner import HyperParameters
 from tensorflow.keras import backend as K
 from keras.callbacks import History, EarlyStopping
 
-
 # utility libraries
 import os
+import sys
 import time
 import itertools
+import pandas as pd
+
+# our commonly used functions
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from global_bug_bot_functions import  *
 
 # data set constants
 TRAIN_GENERATOR = load_data(TRAIN_DIR)
@@ -29,10 +45,23 @@ VAL_GENERATOR = load_data(VALID_DIR)
 TEST_GENERATOR = load_data(TEST_DIR, shuffle_flag=False)
 EVAL_VAL_GENERATOR = load_data(VALID_DIR, shuffle_flag=False)
 
-
+# default argument values
+INPUT_MAXIMUM_EPOCHS = 5
+INPUT_PATIENCE = 5
+INPUT_MIN_DELTA = 0.1
+INPUT_EXECUTIONS_PER_TRIAL = 1
+INPUT_MAX_TRIALS = 5
+PREFIX_FOR_OUTPUT_FILE = 'prefix'
 
 
 def parse_arguments():
+    """
+    Uses argparse to get command line arguments passed in from the user for: epochs, patience, min_delta, executions_per_trial
+    and max_trials. Descriptions for each argument are also provided by the help function of argparse.
+
+    Returns: argument parser with the above-mentioned specified fields
+    """
+
     parser = argparse.ArgumentParser(description="Run model tuners with specified hyperparameters.")
 
     parser.add_argument("--epochs", type=int, required=True, help="Max number of epochs to train the model.")
@@ -43,28 +72,60 @@ def parse_arguments():
 
     return parser.parse_args()
 
-args = parse_arguments()
 
-print(f"Running model tuner with the following settings:")
-print(f"Epochs: {args.epochs}")
-print(f"Patience: {args.patience}")
-print(f"Min Delta: {args.min_delta}")
-print(f"Executions per Trial: {args.executions_per_trial}")
-print(f"Max Trials: {args.max_trials}")
+def init_user_arguments():
+    """
+    Initializes tuner script arguments
+    """
 
-INPUT_MAXIMUM_EPOCHS = args.epochs
-INPUT_PATIENCE = args.patience
-INPUT_MIN_DELTA = args.min_delta
-INPUT_EXECUTIONS_PER_TRIAL = args.executions_per_trial
-INPUT_MAX_TRIALS = args.max_trials
+    global INPUT_MAXIMUM_EPOCHS
+    global INPUT_PATIENCE
+    global INPUT_MIN_DELTA
+    global INPUT_EXECUTIONS_PER_TRIAL
+    global INPUT_MAX_TRIALS
+    global PREFIX_FOR_OUTPUT_FILE
+
+    args = parse_arguments()
+
+    print(f"Running model tuner with the following settings:")
+    print(f"Epochs: {args.epochs}")
+    print(f"Patience: {args.patience}")
+    print(f"Min Delta: {args.min_delta}")
+    print(f"Executions per Trial: {args.executions_per_trial}")
+    print(f"Max Trials: {args.max_trials}")
+
+    INPUT_MAXIMUM_EPOCHS = args.epochs
+    INPUT_PATIENCE = args.patience
+    INPUT_MIN_DELTA = args.min_delta
+    INPUT_EXECUTIONS_PER_TRIAL = args.executions_per_trial
+    INPUT_MAX_TRIALS = args.max_trials
+
+    PREFIX_FOR_OUTPUT_FILE = f'ep{INPUT_MAXIMUM_EPOCHS}_pat{INPUT_PATIENCE}_del{INPUT_MIN_DELTA}_ex{INPUT_EXECUTIONS_PER_TRIAL}_maxtr{INPUT_MAX_TRIALS}'
+
+    return
 
 
-PREFIX_FOR_OUTPUT_FILE = f'ep{INPUT_MAXIMUM_EPOCHS}_pat{INPUT_PATIENCE}_del{INPUT_MIN_DELTA}_ex{INPUT_EXECUTIONS_PER_TRIAL}_maxtr{INPUT_MAX_TRIALS}'
 
 class TunableXception(kt.HyperModel):
 
+    global INPUT_MAXIMUM_EPOCHS
+    global INPUT_PATIENCE
+    global INPUT_MIN_DELTA
+    global INPUT_EXECUTIONS_PER_TRIAL
+    global INPUT_MAX_TRIALS
+    global PREFIX_FOR_OUTPUT_FILE
+
     def build(self, hp):
-        '''builds DenseNet201 customized transfer learning CNN model for hp tuning '''
+        """
+        Builds Xception customized transfer learning CNN model for hp tuning
+
+        Parameters:
+             hp (keras_tuner.HyperParameters) - Keras Tuner's HyperParameters class instance used to
+             tune hyperparameters dropout, batch size, and learning rate
+
+        Returns:
+            (keras model) - compiled keras model
+        """
 
         base_model = Xception(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
@@ -96,18 +157,39 @@ class TunableXception(kt.HyperModel):
         return model
 
     def fit(self, hp, model, *args, **kwargs):
-        '''fits customized MobileNetV2 model with tunable batch size'''
+        """
+        Fits the customized Xception model with a tunable batch size and parameters
+        defined in the model build process.
+
+        Parameters:
+            hp (keras_tuner.HyperParameters) - instance of Keras Tuner's HyperParameters class
+            model (tensorflow.keras.Model) -  keras model built using the build method with hp tuning
+            *args - positional arguments to be passed to model.fit(), including training data.
+            **kwargs - additional keyword arguments for model.fit() including epochs, validation data,
+            and callbacks
+
+        Returns:
+        (tensorflow.keras.callbacks.History) - history object from model.fit()
+    """
         return model.fit(*args, batch_size=model.batch_size,**kwargs)
 
 
 # BUILD BEST MODEL WITH TUNED PARAMS
 def build_best_model_transfer_learning(algorithm, model_name, hp_class = TunableXception()):
-    '''
-    Param: algorithm - string in ['bayes', 'random_search'],
-            model_name - string version of model
-    Use: Build the best model using the desired algorithm to get the best hyperparameter
+    """
+    Builds the best model using the desired algorithm to get the best hyperparameter
     based on validation accuracy
-    '''
+
+    Parameters:
+        algorithm (str) - optimization algorithm denoted by 'bayes' or 'random_search'
+        model_name (str) - string version of model
+        hp_class (function) - tunable model function, default is TunableXception() since this is the densenet script
+
+    Returns:
+        best_hps_dict (dict) -
+        best_model (keras compiled model) - compiled model with best hps
+        best_model_training_history (keras model history) - model history with best hps
+    """
 
     #note: number of hp combinations is high which is why these two algorithms were utilized in addition to
     # literature review:
@@ -118,7 +200,7 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_class = Tunable
         # Define the Bayesian tuner
         tuner = kt.BayesianOptimization(
             hp_class,
-            objective='val_accuracy',  # tune by improving validation accuracy
+            objective= 'val_loss', #'val_accuracy',  # tune by improving validation accuracy
             max_trials=INPUT_MAX_TRIALS,  # num different hp combos to try
             executions_per_trial=INPUT_EXECUTIONS_PER_TRIAL,  # run each model once
             directory='bayesian_tuning',
@@ -127,7 +209,7 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_class = Tunable
     elif algorithm == 'random_search':
         tuner = kt.RandomSearch(
             hp_class,  # Your model-building function
-            objective='val_accuracy',  # Tune for validation accuracy
+            objective= 'val_loss', #'val_accuracy',  # Tune for validation accuracy
             max_trials=INPUT_MAX_TRIALS,  # Number of different hyperparameter combinations to try
             executions_per_trial=INPUT_EXECUTIONS_PER_TRIAL,  # Number of times to run each model hp combo for robustness -- try 3?
             directory='random_search_tuning',  # Directory to store tuning results
@@ -173,11 +255,18 @@ def build_best_model_transfer_learning(algorithm, model_name, hp_class = Tunable
 
 
 def evaluate_model_and_save(model, filename):
-    '''
-    Param: model - trained keras model object,
-            filename - name of file without extension
-    Use: Saves model to h5 file, returns TEST accuracy loss and test accuracy
-    '''
+    """
+    Saves model to .keras file
+
+    Parameters:
+        model (keras model) - trained keras model object
+        filename - name of file without extension
+
+    Returns:
+        (float) test loss
+        (float) test accuracy
+
+    """
 
     # evaluate on test data
     test_loss, test_acc = model.evaluate(TEST_GENERATOR)
@@ -191,6 +280,12 @@ def evaluate_model_and_save(model, filename):
 
 
 def get_model_and_algorithm_combos_dict():
+    """
+    Create dictionary to save densenet model results for each optimization techniques
+
+    Returns:
+        (dict) - dictionary with model and optimization combinations to try
+    """
 
     # model to tune and associated hp class
     models_to_tune ={'Xception': TunableXception()}
@@ -200,7 +295,7 @@ def get_model_and_algorithm_combos_dict():
     # get all possible combinations to run
     combinations_dict = {}
 
-    # iterate through 3 models
+    # iterate through models
     for model_name, model_class in models_to_tune.items():
 
         # go through hp algos
@@ -212,51 +307,54 @@ def get_model_and_algorithm_combos_dict():
 
 def main():
 
-
-
-
-
+    # 1) initialize the epochs, patience, min_delta, executions_per_trial and max_trials from user
+    init_user_arguments()
 
     print('--- MAKING MODEL x HP ALGORITHM COMBINATIONS ---')
+
     combos_to_run = get_model_and_algorithm_combos_dict()
     print('model-alg combinations:', combos_to_run)
 
-    # there should be 6 model combo results
+    # there will be results for each of the optimization methods, saved in this initialized dictionary
     results_dict = {}
 
-    count = 0
+    count = 0 # used to keep track of file run progress
+
+    # for each optimization method for this transfer model,
+    # tune and get the best hps
     for key, funct in combos_to_run.items():
 
         start = time.time()
 
         print(f' --- STARTING MODEL COMBO {count + 1}/2 --- ')
+
         count = count + 1
 
         this_algorithm = key[1]  # which hp algo to use
         this_model_name = key[0]  # which model to use
         this_hp_class = funct  # which hp tuning func to use
 
-        # getting results for this model and optimization alg
+        # getting results for this model and optimization algo
         best_hps_dict, best_model, best_model_training_history = build_best_model_transfer_learning(
             algorithm=this_algorithm,
             model_name=this_model_name,
             hp_class=this_hp_class)
 
         # get final model metrics on test set and save trained model to unique file
-
         save_model_filename = f"{PREFIX_FOR_OUTPUT_FILE}_{this_model_name}_{this_algorithm}"
         this_test_loss, this_test_acc = evaluate_model_and_save(best_model, filename=save_model_filename)
         print(f' ---- Completed saving: {this_model_name}_{this_algorithm}.keras ---- ')
 
-        # Print results
+        # Display results
         print(
             f'Model: {this_model_name}, HP Algorithm: {this_algorithm}, test_loss: {this_test_loss}, test_acc: {this_test_acc}')
 
-        # save validation results in dictionary for comparison yeet
+        # save validation results in dictionary for comparison
         performance_model_metrics_dict_validation = evaluation_metrics(best_model, EVAL_VAL_GENERATOR, best_model_training_history)
 
         print('Completed call to evaluation_metrics for validation data.')
 
+        # getting the result metrics
         best_validation_accuracy = performance_model_metrics_dict_validation["accuracy"]
         best_validation_precision = performance_model_metrics_dict_validation["precision"]
         best_validation_recall = performance_model_metrics_dict_validation["recall"]
@@ -277,6 +375,7 @@ def main():
         best_batch_size = best_hps_dict["best_batch_size"]
         best_epochs = best_hps_dict["best_epochs"]
 
+        # save the metric results and model info to a dictionary
         results_dict[f'{this_model_name}_{this_algorithm}'] = {
             "test_loss": this_test_loss,
             "test_accuracy": this_test_acc,
@@ -299,21 +398,22 @@ def main():
 
     # save final csv with all info!
     df_results = pd.DataFrame(results_dict)
-    df_results.to_csv(f'{PREFIX_FOR_OUTPUT_FILE}_from_tuning_script_final_tuned_models_results_xception.csv')
+    df_results.to_csv(f'{PREFIX_FOR_OUTPUT_FILE}_from_tuning_script_final_tuned_models_results_Xception.csv')
 
     print('Completed tuning and saving final model.')
 
 
 if __name__ == "__main__":
 
-    # Open a terminal and navigate to the directory containing this file, the DATA folder, and global_bug_bot_functions.py
+    # Directions: Open a terminal and navigate to the bugbot directory
 
     # Run the script 4 times with the following (you can copy and paste) :
 
-    # run 0)  python Xception_run_tuner_script.py --epochs 30 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
-    # run 1)  python Xception_run_tuner_script.py --epochs 30 --patience 5 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
-    # run 2) python Xception_run_tuner_script.py --epochs 30 --patience 5 --min_delta 0.001 --executions_per_trial 3 --max_trials 60
-    # run 3) python Xception_run_tuner_script.py --epochs 64 --patience 10 --min_delta 0.0001 --executions_per_trial 1 --max_trials 20
-    # run 4) python Xception_run_tuner_script.py --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
+    # run 1)  python "Model Tuning Scripts/Xception_run_tuner_script.py" --epochs 30 --patience 5 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
+    # run 2) python "Model Tuning Scripts/Xception_run_tuner_script.py" --epochs 30 --patience 5 --min_delta 0.001 --executions_per_trial 3 --max_trials 60
+    # run 3) python "Model Tuning Scripts/Xception_run_tuner_script.py" --epochs 64 --patience 10 --min_delta 0.0001 --executions_per_trial 1 --max_trials 20
+    # run 4) python "Model Tuning Scripts/Xception_run_tuner_script.py" --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
 
     main()
+
+    # tested on: python Xception_run_tuner_script.py --epochs 5 --patience 3 --min_delta 0.01 --executions_per_trial 1 --max_trials 5
