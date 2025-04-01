@@ -74,28 +74,8 @@ Complete the following if you do not already have an environment set up with our
     
 12. Done!
 
-# Setup Instructions
 
-## Overview
-This project contains scripts and notebooks designed for data processing, model training, visualization, and web scraping.
-
-## Folder Structure
-```
-├── Best Models
-├── BugBot Architecture Diagrams
-├── DATA
-├── Model Tuning Scripts
-├── Reports
-├── webapp
-├── README.md
-├── data_processing_pipeline.py
-├── global_bug_bot_functions.py
-├── model_implementation_metric_visuals.ipynb
-├── requirements.txt
-└── web_scraper.ipynb
-```
-
-## Setup Instructions
+## Detailed Setup Instructions
 
 ### 1. Clone Repository
 ```bash
