@@ -76,6 +76,21 @@ Complete the following if you do not already have an environment set up with our
 
 # BugBot Code Guide
 
+### Folder Structure
+```
+├── Best Models                  # Saved best-performing models by architecture
+├── BugBot Architecture Diagrams# Diagrams outlining model/system design
+├── DATA                        # Dataset used for training and testing
+├── Model Tuning Scripts        # Scripts for tuning/training models
+├── Reports                     # Final presentation and deliverables
+├── webapp                      # Lightweight web app for model inference
+├── README.md                   # Project documentation
+├── data_processing_pipeline.py # Cleans, augments, and prepares image data
+├── global_bug_bot_functions.py # Shared utility functions used across scripts
+├── model_implementation_metric_visuals.ipynb # Visualizes training metrics
+├── requirements.txt            # Python package dependencies
+├── web_scraper.ipynb           # Collects pest images from the web
+```
 ### Core Scripts
 - **`data_processing_pipeline.py`**: Performs data cleaning, augmentation, label encoding, and prepares datasets for training.
 - **`global_bug_bot_functions.py`**: Shared helper functions used across models and scripts, such as performance evaluation and visualization utilities.
@@ -88,7 +103,12 @@ Complete the following if you do not already have an environment set up with our
   - `Xception_run_tuner_script.py`: Runs tuning and training for Xception.
 
 ### Best Performing Models
-- **`Best Models/`**: Stores saved versions of the highest performing models (DenseNet201, MobileNetV2, Xception) based on validation accuracy.
+- **`best_model_densenet.ipynb`**: Early version of the DenseNet201 evaluation notebook.
+- **`best_model_densenet_latest.ipynb`**: Latest version with improved preprocessing and result visualization.
+- **`best_model_densenet_updated_layers.ipynb`**: Experimented with modified DenseNet201 architecture by updating final layers.
+- **`best_model_densenet_updated_layers_latest.ipynb`**: Combines updated layers with the latest training logic for best performance.
+
+- **`Best Models/`**: Directory containing subfolders for DenseNet201, MobileNetV2, and Xception models—each storing their best-performing trained weights.
 
 ### Metrics Visualization
 - **`model_implementation_metric_visuals.ipynb`**: Visualizes training curves, confusion matrices, and other metrics for comparative evaluation of models.
@@ -99,14 +119,17 @@ Complete the following if you do not already have an environment set up with our
 - **`webapp/test images/`**: Sample images for quick demo/testing within the app interface.
 
 ### Data Collection
-- **`web_scraper.ipynb`**: Script to collect pest images from online sources based on defined keywords, helpful for dataset expansion.
-
+- **`DATA/`**: Contains image folders for each pest category, used for training and validation:
+  - `american_house_spider`, `bedbug`, `brown_stink_bug`, `carpenter_ant`, `cellar_spider`, `flea`, `house_centipede`, `rice_weevil`, `silverfish`, `subterranean_termite`, `tick`
+  - Each folder includes sample images of that species.
+- **`web_scraper.ipynb`**: Notebook that uses image search and scraping logic to gather new pest image data for training or augmentation.
+- 
 ### Documentation
-- **`README.md`**: Main project documentation (this file).
-- **`Reports/`**: Final presentation slides, model comparison discussion, and design decisions.
-- **`BugBot Architecture Diagrams/`**: Visual diagrams representing the full pipeline and system architecture.
-
-
+- **`README.md`**: Contains detailed instructions, code usage descriptions, and an overview of the entire project workflow.
+- **`Reports/`**: Includes final project presentations, comparisons across model approaches, and summary of decisions taken during development.
+- **`BugBot Architecture Diagrams/`**:
+  - `BugBotPrelimArchitecture.jpg`: Diagram showing the early design of the BugBot system pipeline.
+  - `BugBotWorkflow.png`: Workflow representation of the end-to-end image classification process.
 
 
 
