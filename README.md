@@ -74,6 +74,80 @@ Complete the following if you do not already have an environment set up with our
     
 12. Done!
 
+# Setup Instructions
+
+## Overview
+This project contains scripts and notebooks designed for data processing, model training, visualization, and web scraping.
+
+## Folder Structure
+```
+├── Best Models
+├── BugBot Architecture Diagrams
+├── DATA
+├── Model Tuning Scripts
+├── Reports
+├── webapp
+├── README.md
+├── data_processing_pipeline.py
+├── global_bug_bot_functions.py
+├── model_implementation_metric_visuals.ipynb
+├── requirements.txt
+└── web_scraper.ipynb
+```
+
+## Setup Instructions
+
+### 1. Clone Repository
+```bash
+git clone <repository_link>
+cd <repository_folder>
+```
+
+### 2. Install Dependencies
+Ensure Python is installed (Python 3.7+ recommended).
+```bash
+pip install -r requirements.txt
+```
+
+## Running Scripts and Notebooks
+
+### Data Processing
+- **`data_processing_pipeline.py`**
+  ```bash
+  python data_processing_pipeline.py
+  ```
+
+### Model Training and Tuning
+- Navigate to `Model Tuning Scripts`
+- Example usage:
+  ```bash
+  python "Model Tuning Scripts/DenseNet201_run_tuner_script_updated.py" --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
+  ```
+
+### Visualization of Metrics
+- Open and run notebook `model_implementation_metric_visuals.ipynb` in Jupyter:
+  ```bash
+  jupyter notebook model_implementation_metric_visuals.ipynb
+  ```
+
+### Web Scraper
+- Open and execute notebook `web_scraper.ipynb`:
+  ```bash
+  jupyter notebook web_scraper.ipynb
+  ```
+
+### Global Functions
+- The `global_bug_bot_functions.py` file contains common utility functions imported and used by other scripts and notebooks.
+
+## Reports and Best Models
+- Results and trained model checkpoints are saved under `Reports` and `Best Models`, respectively.
+
+## Web Application
+- The `webapp` folder contains files related to the project's web application (setup details provided separately in the `webapp` directory).
+
+
+
+
 
 
 
