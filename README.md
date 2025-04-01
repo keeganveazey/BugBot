@@ -103,12 +103,11 @@ Complete the following if you do not already have an environment set up with our
   - `Xception_run_tuner_script.py`: Runs tuning and training for Xception.
 
 ### Best Performing Models
+- **`Best Models/`**: Directory containing subfolders for DenseNet201, MobileNetV2, and Xception models—each storing their best-performing trained weights.
 - **`best_model_densenet.ipynb`**: Early version of the DenseNet201 evaluation notebook.
 - **`best_model_densenet_latest.ipynb`**: Latest version with improved preprocessing and result visualization.
 - **`best_model_densenet_updated_layers.ipynb`**: Experimented with modified DenseNet201 architecture by updating final layers.
 - **`best_model_densenet_updated_layers_latest.ipynb`**: Combines updated layers with the latest training logic for best performance.
-
-- **`Best Models/`**: Directory containing subfolders for DenseNet201, MobileNetV2, and Xception models—each storing their best-performing trained weights.
 
 ### Metrics Visualization
 - **`model_implementation_metric_visuals.ipynb`**: Visualizes training curves, confusion matrices, and other metrics for comparative evaluation of models.
