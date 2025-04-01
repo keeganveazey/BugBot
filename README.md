@@ -113,7 +113,7 @@ Complete the following if you do not already have an environment set up with our
 - **`model_implementation_metric_visuals.ipynb`**: Visualizes training curves, confusion matrices, and other metrics for comparative evaluation of models.
 
 ### Web Interface
-- **`webapp/app.py`**: Launches a Flask web app that allows users to upload pest images and get predictions from the trained model.
+- **`webapp/app.py`**: Launches a Streamlit web app that allows users to upload pest images and get predictions from the trained model.
 - **`webapp/requirements.txt`**: Contains the web app's specific dependencies.
 - **`webapp/test images/`**: Sample images for quick demo/testing within the app interface.
 
