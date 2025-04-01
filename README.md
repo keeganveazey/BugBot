@@ -51,7 +51,8 @@ The final outcome of BugBot will provide interpretable insights to end users by 
 
 # Setup Instructions
 
-Pip install requirements.txt to a virtual environment (Python 3.12)
+Pip install requirements.txt to a virtual environment (**Python 3.12**)
+Please double check you are using python version 3.12 and using python3.12 instead of python if necessary in your command line commands. 
 
 1. **cd** to repo location (change directory)
 
