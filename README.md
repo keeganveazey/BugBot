@@ -74,56 +74,39 @@ Complete the following if you do not already have an environment set up with our
     
 12. Done!
 
+# BugBot Code Guide
 
-## Detailed Setup Instructions
+### Core Scripts
+- **`data_processing_pipeline.py`**: Performs data cleaning, augmentation, label encoding, and prepares datasets for training.
+- **`global_bug_bot_functions.py`**: Shared helper functions used across models and scripts, such as performance evaluation and visualization utilities.
 
-### 1. Clone Repository
-```bash
-git clone <repository_link>
-cd <repository_folder>
-```
+### Model Implementation & Tuning
+- **`Model Tuning Scripts/`**: Contains training scripts for each model architecture with integrated Keras Tuner support:
+  - `DenseNet201_run_tuner_script.py`: Runs hyperparameter tuning for DenseNet201.
+  - `DenseNet201_run_tuner_script_gpu.py`: Same as above, optimized for GPU execution.
+  - `MobileNetV2_run_tuner_script.py`: Runs tuning and training for MobileNetV2.
+  - `Xception_run_tuner_script.py`: Runs tuning and training for Xception.
 
-### 2. Install Dependencies
-Ensure Python is installed (Python 3.7+ recommended).
-```bash
-pip install -r requirements.txt
-```
+### Best Performing Models
+- **`Best Models/`**: Stores saved versions of the highest performing models (DenseNet201, MobileNetV2, Xception) based on validation accuracy.
 
-## Running Scripts and Notebooks
+### Metrics Visualization
+- **`model_implementation_metric_visuals.ipynb`**: Visualizes training curves, confusion matrices, and other metrics for comparative evaluation of models.
 
-### Data Processing
-- **`data_processing_pipeline.py`**
-  ```bash
-  python data_processing_pipeline.py
-  ```
+### Web Interface
+- **`webapp/app.py`**: Launches a Flask web app that allows users to upload pest images and get predictions from the trained model.
+- **`webapp/requirements.txt`**: Contains the web app's specific dependencies.
+- **`webapp/test images/`**: Sample images for quick demo/testing within the app interface.
 
-### Model Training and Tuning
-- Navigate to `Model Tuning Scripts`
-- Example usage:
-  ```bash
-  python "Model Tuning Scripts/DenseNet201_run_tuner_script_updated.py" --epochs 20 --patience 3 --min_delta 0.001 --executions_per_trial 1 --max_trials 20
-  ```
+### Data Collection
+- **`web_scraper.ipynb`**: Script to collect pest images from online sources based on defined keywords, helpful for dataset expansion.
 
-### Visualization of Metrics
-- Open and run notebook `model_implementation_metric_visuals.ipynb` in Jupyter:
-  ```bash
-  jupyter notebook model_implementation_metric_visuals.ipynb
-  ```
+### Documentation
+- **`README.md`**: Main project documentation (this file).
+- **`Reports/`**: Final presentation slides, model comparison discussion, and design decisions.
+- **`BugBot Architecture Diagrams/`**: Visual diagrams representing the full pipeline and system architecture.
 
-### Web Scraper
-- Open and execute notebook `web_scraper.ipynb`:
-  ```bash
-  jupyter notebook web_scraper.ipynb
-  ```
 
-### Global Functions
-- The `global_bug_bot_functions.py` file contains common utility functions imported and used by other scripts and notebooks.
-
-## Reports and Best Models
-- Results and trained model checkpoints are saved under `Reports` and `Best Models`, respectively.
-
-## Web Application
-- The `webapp` folder contains files related to the project's web application (setup details provided separately in the `webapp` directory).
 
 
 
