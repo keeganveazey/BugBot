@@ -122,7 +122,7 @@ Complete the following if you do not already have an environment set up with our
   - `american_house_spider`, `bedbug`, `brown_stink_bug`, `carpenter_ant`, `cellar_spider`, `flea`, `house_centipede`, `rice_weevil`, `silverfish`, `subterranean_termite`, `tick`
   - Each folder includes sample images of that species.
 - **`web_scraper.ipynb`**: Notebook that uses image search and scraping logic to gather new pest image data for training or augmentation.
-- 
+  
 ### Documentation
 - **`README.md`**: Contains detailed instructions, code usage descriptions, and an overview of the entire project workflow.
 - **`Reports/`**: Includes final project presentations, comparisons across model approaches, and summary of decisions taken during development.
