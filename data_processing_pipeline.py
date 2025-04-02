@@ -47,7 +47,7 @@ AUGMENTATION_LIST = ["original", "flipped_horizontally", "flipped_vertically", \
 
 # Map of filename patterns to the correct class name
 INSECT_CLASS_MAPPING = {
-    "weevil": "adult_rice_weevil",
+    "weevil": "rice_weevil",
     "centipede": "house_centipede",
     "house_spider": "american_house_spider",
     "house_": "american_house_spider",
@@ -557,6 +557,11 @@ def main():
     global TEST_DATA
     global VALIDATION_DATA
 
+    global RAW_IMG_DIR
+    global ALL_PROCESSED_DATA
+    global TRAINING_DATA
+    global AUGMENTED_OUTPUT_DIR
+
     start = time.time()
 
     print("---------------START OF IMAGE PROCESSING---------------")
@@ -599,7 +604,7 @@ def main():
     # 5) perform data augmentation on training set
     print("---------------PERFORMING DATA AUGMENTATION ON TRAINING SET---------------")
     training_folders = get_folders(TRAINING_DATA)
-    training_folders = [f for f in processed_insect_folders if 'DATA' not in f]
+    training_folders = [f for f in training_folders if 'DATA' not in f]
 
     # 6) image normalization
     # can use function normalize_image(img_object, range_type = 1) BUT
