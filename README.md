@@ -1,5 +1,6 @@
 # BugBot
 Image classification of common household pest images
+
 https://bugbot.streamlit.app/ 
 
 # About BugBot:
