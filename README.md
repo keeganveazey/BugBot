@@ -107,18 +107,19 @@ Complete the following if you do not already have an environment set up with our
 
 ### Best Performing Models
 - **`Best Models/`**: Directory containing subfolders for DenseNet201, MobileNetV2, and Xception models—each storing their best-performing trained weights.
-- **`best_model_densenet.ipynb`**: Early version of the DenseNet201 evaluation notebook.
-- **`best_model_densenet_latest.ipynb`**: Latest version with improved preprocessing and result visualization.
-- **`best_model_densenet_updated_layers.ipynb`**: Experimented with modified DenseNet201 architecture by updating final layers.
-- **`best_model_densenet_updated_layers_latest.ipynb`**: Combines updated layers with the latest training logic for best performance.
+- **`final_best_model_densenet.ipynb`**: Notebook for evaluating metrics using best hyperparameters after tuning for DenseNet201
+- **`final_best_model_mobilenet.ipynb`**: Notebook for evaluating metrics using best hyperparameters after tuning for MobileNetV2.
+- **`final_best_model_xception.ipynb`**: Notebook for evaluating metrics using best hyperparameters after tuning for Xception.
 
 ### Metrics Visualization
 - **`model_implementation_metric_visuals.ipynb`**: Visualizes training curves, confusion matrices, and other metrics for comparative evaluation of models.
 
 ### Web Interface
-- **`webapp/app.py`**: Launches a Streamlit web app that allows users to upload pest images and get predictions from the trained model.
-- **`webapp/requirements.txt`**: Contains the web app's specific dependencies.
 - **`webapp/test images/`**: Sample images for quick demo/testing within the app interface.
+- **`webapp/app.py`**: Launches a Streamlit web app that allows users to upload pest images and get predictions from the trained model.
+- **`webapp/model.h5`**: Final custom DenseNet201 model used in app.py to generate predictions.
+- **`webapp/requirements.txt`**: Contains the web app's specific dependencies.
+
 
 ### Data Collection
 - **`DATA/`**: Contains image folders for each pest category, used for training and validation:
