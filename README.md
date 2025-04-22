@@ -1,8 +1,7 @@
 # BugBot
 Image classification of common household pest images
 
-### Website: 
-https://bugbot.streamlit.app/ 
+### Website: https://bugbot.streamlit.app/ 
 
 ### Access the paper in Reports/FINAL_REPORT.pdf
 
