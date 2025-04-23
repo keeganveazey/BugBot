@@ -122,6 +122,7 @@ Complete the following if you do not already have an environment set up with our
 - **`webapp/app.py`**: Launches a Streamlit web app that allows users to upload pest images and get predictions from the trained model.
 - **`webapp/model.h5`**: Final custom DenseNet201 model used in app.py to generate predictions.
 - **`webapp/requirements.txt`**: Contains the web app's specific dependencies.
+- - **`webapp/README.txt`**: Contains instructions on how to run the Streamlit web app locally.
 
 
 ### Data Collection
