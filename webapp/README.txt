@@ -23,8 +23,7 @@ How to run this Streamlit web app locally
 
 5. Run Streamlit app
    First run app.py
-   After running app.py, in the terminal, navigate to the `webapp` directory and 
-   start the Streamlit app by typing and entering:
+   After running app.py, in the terminal, type and enter the following command:
 
    streamlit run app.py
 
